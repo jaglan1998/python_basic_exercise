@@ -30,7 +30,7 @@ def play():
             print("You Lost")
             computer_score += 1
             break
-    print(f"In {x} matches, you won {user_score} times while computer won {computer_score} times.")
+    print(f"\nIn {x} matches, you won {user_score} times while computer won {computer_score} times.")
 
 
 play()
