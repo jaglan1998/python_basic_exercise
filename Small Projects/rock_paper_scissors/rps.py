@@ -32,5 +32,6 @@ def play():
             break
     print(f"\nIn {x} matches, you won {user_score} times while computer won {computer_score} times.")
 
-
 play()
+
+input()
