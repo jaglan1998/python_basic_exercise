@@ -110,6 +110,7 @@ def hangman():
 
 hangman()  # calling the function
 
+input("Press enter to exit.....")  # blank input for holding the cmd to not exit after completion of program.
 
 
 
