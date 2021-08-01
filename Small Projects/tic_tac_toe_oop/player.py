@@ -6,23 +6,24 @@ class Player:
     def __init__(self, letter):
         self.letter = letter
 
-    def get_move(self, game):
-        pass
 
 class HumanPlayer(Player):
     def __init__(self, letter):
         super().__init__(letter)
 
     def get_move(self, game):
-        valid_move = False
-        while not valid_move:
+        position = None
+        while True:
+            position = input(f"{self.letter}'s turn. Enter the position 1-9: ")
             try:
-                position = int(input("Enter the position 1-9: "))
-                if position not in game.available_moves:
+                position = int(position)
+                if position in game.available_moves():
+                    break
+                else:
                     raise ValueError
-                valid_move = True
             except ValueError:
                 print("Value Error. Try again.")
+                continue
         return position
 
 
@@ -30,9 +31,7 @@ class RandomBotPlayer(Player):
     def __init__(self, letter):
         super().__init__(letter)
 
-    def get_move(self, game):
-        position =  random.choice(game.available_moves)
+    @staticmethod
+    def get_move(game):
+        position = random.choice(game.available_moves())
         return position
-
-
-
