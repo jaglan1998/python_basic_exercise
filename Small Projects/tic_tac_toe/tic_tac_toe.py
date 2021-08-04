@@ -1,150 +1,177 @@
-# board is the list of 9 items where we can store the position of X or 0
-# outside the function all variables are global
 import random
+import time
 
-board = ['-', '-', '-',
-         '-', '-', '-',
-         '-', '-', '-']
-
+board = {k: ' ' for k in range(1, 10)}  # dict compression
 winner = None  # no one is winner yet
 game_is_going = True  # true as the game is on and no winner or tie yet
 
-computer_player = 'X'
-human_player = '0'
-print(f"Computer player is {computer_player} and human player is {human_player}.\n")
-print("The first turn is random computer or human.\n")
-current_player = random.choice([computer_player, human_player])
-
-# current_player = input("\nChoose X or 0: ").upper()  # lets say the player is X
-# while current_player not in ['X', '0']:
-#     current_player = input("\nInvalid character. Choose X or 0: ").upper()
+x_player = [' ', 'X']
+o_player = [' ', '0']
 
 
-# displays the items stored in board list with help of indexing
-def display_board():
-    print(board[0] + '|' + board[1] + '|' + board[2])
-    print(board[3] + '|' + board[4] + '|' + board[5])
-    print(board[6] + '|' + board[7] + '|' + board[8])
+def select_player():
+    global x_player, o_player
+    print("Player options Genius Bot (G), Human (H), Random Bot (R).")
+    user_input = input("Enter X player: ").upper()
+    if user_input == 'R':
+        x_player[0] = 'random_bot'
+    elif user_input == 'H':
+        x_player[0] = 'human'
+    elif user_input == 'G':
+        x_player[0] = 'genius_bot'
+    else:
+        print('Try again.')
+    user_input = input("Enter 0 player: ").upper()
+    if user_input == 'R':
+        o_player[0] = 'random_bot'
+    elif user_input == 'H':
+        o_player[0] = 'human'
+    elif user_input == 'G':
+        o_player[0] = 'genius_bot'
+    else:
+        print('Try again.')
 
-def empty_board():
-    if 'X' or "0" in board:
+
+def display_board():  # displays the board items
+    print(board[1] + '|' + board[2] + '|' + board[3])
+    print(board[4] + '|' + board[5] + '|' + board[6])
+    print(board[7] + '|' + board[8] + '|' + board[9])
+    print(' ')
+
+
+def minimax(board, depth, isMaximizing):
+    if check_for_win(x_player):
+        return 1
+    elif check_for_win(o_player):
+        return -1
+    elif check_draw():
+        return 0
+
+    if isMaximizing:
+        best_score = -800
+        for key in board.keys():
+            if board[key] == ' ':
+                board[key] = x_player[1]
+                score = minimax(board, depth + 1, False)
+                board[key] = ' '
+                if score > best_score:
+                    best_score = score
+        return best_score
+
+    else:
+        best_score = 800
+        for key in board.keys():
+            if board[key] == ' ':
+                board[key] = o_player[1]
+                score = minimax(board, depth + 1, True)
+                board[key] = ' '
+                if score < best_score:
+                    best_score = score
+        return best_score
+
+
+def make_move(player):  # makes move according to the player
+    global board
+    available_moves = [k for k, v in board.items() if v == ' ']
+    move = 0
+    if player[0] == 'random_bot':
+        move = random.choice(available_moves)
+    elif player[0] == 'genius_bot':
+        best_score = -800
+        move = 0
+        for key in board.keys():
+            if board[key] == ' ':
+                board[key] = x_player[1]
+                score = minimax(board, 0, False)
+                board[key] = ' '
+                if score > best_score:
+                    best_score = score
+                    move = key
+
+    elif player[0] == 'human':
+        try:
+            move = int(input("Enter you move from 1-9: "))
+            while move not in available_moves:
+                move = int(input("Try again. Enter you move from 1-9: "))
+        except ValueError:
+            print("Try again. Value Error")
+    board[move] = player[1]
+    return
+
+
+def check_for_win(player):
+    global winner
+    if board[1] == board[2] == board[3] == player[1]:
+        winner = player
         return True
-
-
-
-
-
-# to get the next valid move/position, displays that move on the board
-def next_move():
-    global current_player, board
-
-    while True:  # ask position, if not valid nest loop that part, if empty space draw value, if not loops back here
-        if current_player == computer_player:
-            position = random.choice(['1', '2', '3', '4', '5', '6', '7', '8', '9'])
-            index = int(position) - 1
-            if board[index] == '-':  # if the selected position is empty '-' only then we can
-                board[index] = current_player  # add current player e.g. 'X' on that
-                break
-            elif board[index] == 'X' or board[index] == '0':  # otherwise shows the try again message
-                continue  # keep continue the loop until we get valid input and valid '-' blank space
-        else:
-            position = input("Choose a position from 1-9: ")  # we -1 to make it index as index start from 0
-            while position not in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:  # checks if input is valid or
-                position = input("Invalid character. Choose a position from 1-9: ")  # otherwise loops back
-            index = int(position) - 1
-            if board[index] == '-':  # if the selected position is empty '-' only then we can
-                board[index] = current_player  # add current player e.g. 'X' on that
-                break  # every thing is fine, will add value on board
-            elif board[index] == 'X' or board[index] == '0':  # otherwise shows the try again message
-                print("\nAlready used spot, try again.....")
-                continue  # keep continue the loop until we get valid input and valid '-' blank space
-
-
-
-    board[index] = current_player
-    return display_board()
-
+    elif board[4] == board[5] == board[6] == player[1]:
+        winner = player
+        return True
+    elif board[7] == board[8] == board[9] == player[1]:
+        winner = player
+        return True
+    elif board[1] == board[4] == board[7] == player[1]:
+        winner = player
+        return True
+    elif board[2] == board[5] == board[8] == player[1]:
+        winner = player
+        return True
+    elif board[3] == board[6] == board[9] == player[1]:
+        winner = player
+        return True
+    elif board[1] == board[5] == board[9] == player[1]:
+        winner = player
+        return True
+    elif board[3] == board[5] == board[7] == player[1]:
+        winner = player
+        return True
 
 # checks rows for winner
 def check_rows():
     global winner
-    if board[0] == board[1] == board[2] != '-':  # if all the spots are equal but not empty
-        winner = board[0]  # winner will be the value of any of those spots
-    elif board[3] == board[4] == board[5] != '-':
-        winner = board[3]
-    elif board[6] == board[7] == board[8] != '-':
-        winner = board[6]
+    if board[1] == board[2] == board[3] != '-':  # if all the spots are equal but not empty
+        winner = board[1]  # winner will be the value of any of those spots
+    elif board[4] == board[5] == board[6] != '-':
+        winner = board[4]
+    elif board[7] == board[8] == board[9] != '-':
+        winner = board[7]
     return winner
 
 
-# checks columns for winner
-def check_columns():
-    global winner
-    if board[0] == board[3] == board[6] != '-':  # if all the spots are equal but not empty
-        winner = board[0]  # winner will be the value of any of those spots
-    elif board[1] == board[4] == board[7] != '-':
-        winner = board[1]
-    elif board[2] == board[5] == board[8] != '-':
-        winner = board[2]
-    return winner
-
-
-# checks diagonals for winner
-def check_diagonals():
-    global winner
-    if board[0] == board[4] == board[8] != '-':  # if all the spots are equal but not empty
-        winner = board[0]  # winner will be the value of any of those spots
-    elif board[6] == board[4] == board[2] != '-':
-        winner = board[6]
-    return winner
-
-
-# check the winner if any, then false the game_is_going
-def check_for_winner():
-    global game_is_going
-    check_rows()
-    check_columns()
-    check_diagonals()
-    if winner == 'X' or winner == '0':
-        game_is_going = False
-    elif winner is None and '-' not in board:  # if no winner and no space left
-        game_is_going = False  # its a tie and game stops
-    return
+def check_draw():
+    if ' ' not in board.values():
+        return True
+    return False
 
 
 # it flips the player one after other
-def flip_the_players():
-    global current_player
-    if current_player == "X":
-        current_player = '0'
-    elif current_player == '0':
-        current_player = 'X'
-    return current_player
+def flip_the_players(player):
+    if player[1] == "X":
+        player = o_player
+    elif player[1] == '0':
+        player = x_player
+    return player
 
 
 # function to execute the other functions step wise to play the game
 def play_game():
-    global current_player  # using global variable concept
-    global game_is_going
+    global game_is_going, winner
+    display_board()
+    player = x_player  # starting player
 
-    if current_player == human_player and empty_board():
-        display_board()  # step 1 - we just see the blank display board with '-'
-
-    while game_is_going:  # will keep looping while the game is going, which is true
-        if current_player == human_player:
-            print(f"\n...........Its' your turn.........\n")  # step 2 - tells the turn
-        else:
-            print("\n")
-        next_move()  # step 3 - input valid move, displays it
-        check_for_winner()  # step 4 - check the winner if any, then false the game_is_going
-        flip_the_players()  # step 5 - if no winner flip the players to loop back again
-
-    # here the game ends
-    if winner == 'X' or winner == '0':
-        print(f"\n{winner} won the game......")
-    elif winner is None:
-        print("\nIts a tie")
+    while game_is_going and ' ' in board.values():  # will keep looping while the game is going, which is true
+        print(f"This is {player}' turn.")
+        make_move(player)
+        time.sleep(0.01)
+        display_board()
+        if check_for_win(player):
+            game_is_going = False
+            print(f'{winner} won the game.')
+        player = flip_the_players(player)
+    if check_draw():
+        print('Its a tie.')
 
 
+select_player()
 play_game()
 input("\nPress any key to exit......")
