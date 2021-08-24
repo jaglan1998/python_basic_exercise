@@ -6,9 +6,12 @@ valid """
 import string
 
 
-class ValidName:
+class ValidInput:
     def __init__(self):
         self.INPUT = None
+        self.email_domains = []
+        with open('all_email_provider_domains.txt', 'r') as f:
+            self.email_domains = f.read().split('\n')
 
     def is_valid_name(self):
         temp = self.INPUT.replace(' ', '')  # mix first and last name if any
@@ -16,7 +19,7 @@ class ValidName:
             return True, 'No name provided'
         elif 20 >= len(temp) >= 3:
             if len(set(temp) - set(string.ascii_letters)) == 0:  # if the letters are english alphabets only
-                return True, 'True'
+                return True, 'Valid english alphabet'
             return False, 'Not a valid english alphabet'
         else:
             return False, 'Name must be => 3 or <= 20 characters.'
@@ -30,41 +33,65 @@ class ValidName:
             self.is_valid_name()
         return self.INPUT
 
+    def is_valid_ph_no(self):
+        try:
+            self.INPUT = int(self.INPUT)
+        except ValueError:
+            return False, 'Integral value only. Try again'
+        if len(str(self.INPUT)) != 10:
+            return False, 'Phone number must be of 10 digits. Try again'
+        else:
+            return True, 'Valid phone number'
 
+    def get_valid_ph_no(self):
+        self.INPUT = input("Phone: ")
+        self.is_valid_ph_no()
+        while not self.is_valid_ph_no()[0]:
+            print(self.is_valid_ph_no()[1])
+            self.INPUT = input("Phone: ")
+            self.is_valid_ph_no()
+        return self.INPUT
 
+    def is_valid_password(self):
+        if len(set(string.ascii_lowercase).intersection(set(self.INPUT))) == 0:
+            return False, 'Need at least one lowercase letter. Try again'
+        elif len(set(string.ascii_uppercase).intersection(set(self.INPUT))) == 0:
+            return False, 'Need at least one uppercase letter. Try again'
+        elif len(set(string.punctuation).intersection(set(self.INPUT))) == 0:
+            return False, 'Need at least one special character letter. Try again'
+        elif len(set(string.digits).intersection(set(self.INPUT))) == 0:
+            return False, 'Need at least one integral number character letter. Try again'
+        elif len(self.INPUT) < 8 or len(self.INPUT) > 20:
+            return False, 'Need to be in between 8 to 20 characters. Try again'
+        return True, 'Valid strong password'
 
-    # @staticmethod
-    # def valid_name():  # gets valid name
-    #     while True:  # keep on looping until we get valid name
-    #         name = input("Name: ")
-    #         temp = name.replace(' ', '')  # just mix first and last name
-    #         if len(temp) == 0:  # if we decide to pass the name
-    #             break
-    #         elif len(temp) > 20:
-    #             print("Name must be under 20 characters.")
-    #             continue
-    #         elif len(set(temp) - set(string.ascii_letters)) == 0:  # if the letters are english alphabets only
-    #             break
-    #         else:
-    #             print("Wrong input. Try again.")
-    #             continue
-    #     return name
-    #
-    # @staticmethod
-    # def valid_phone():
-    #     while True:  # loops until we get valid phone
-    #         phone = input("Phone: ")
-    #         try:  # trying to get the integral value
-    #             if len(phone) != 0:  # just to pass empty phone number
-    #                 ph = int(phone)
-    #         except ValueError:
-    #             print('Integral values only.')
-    #             continue
-    #         if len(phone) == 10 or len(phone) == 0:
-    #             break
-    #         print('Phone must be of 10 digits. Try again.')
-    #         continue
-    #     return phone
+    def get_valid_password(self):
+        self.INPUT = input("Password: ")
+        self.is_valid_password()
+        while not self.is_valid_password()[0]:
+            print(self.is_valid_password()[1])
+            self.INPUT = input("Password: ")
+            self.is_valid_password()
+        return self.INPUT
 
-n = ValidName()
-print(n.get_valid_name())
+    def is_valid_email(self):
+        if '@' not in self.INPUT:
+            return False, 'Not a valid email. Missing @. Try again'
+        e = self.INPUT.split('@')
+        prefix = e[0]
+        domain = e[1]
+        if domain not in self.email_domains:
+            return False, 'Not a valid email domain. Try again'
+        elif len(prefix) > 20:
+            return False, 'Email prefix should be less than 20 character. Try again'
+        return True, 'Valid email'
+
+    def get_valid_email(self):
+        self.INPUT = input("Email: ")
+        self.is_valid_email()
+        while not self.is_valid_email()[0]:
+            print(self.is_valid_email()[1])
+            self.INPUT = input("Email: ")
+            self.is_valid_email()
+        return self.INPUT
+
