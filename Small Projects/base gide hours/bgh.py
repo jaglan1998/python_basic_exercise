@@ -187,29 +187,30 @@ matrix = {
     '99500':'1185.1',
     '100000':'1188.1'}
 
-sales = round(float(input("Enter the sales: ")), 2)
-ln_sales = round(float(input("Enter the late night sales: ")), 2)
-lnh = round((191.7-(6500-math.ceil(7*ln_sales))/100)/7, 2)
-print('LNH: ', lnh)
 
-# print(sales, ln_sales)
-
-# round down to the nearest 500
-match_matrix = math.floor(round(((sales - ln_sales)*7), 2)/500)*500
-
-found_matrix = None
-
-for k,v in matrix.items():
-    if int(k) == match_matrix:
-        found_matrix = float(v)
-
-bgh = round(found_matrix/7, 2)
-
-print("BGH: ", bgh)
+def cal_lnh(ln):
+    lnh = round((191.7-(6500-math.ceil(7*ln))/100)/7, 2)
+    return lnh
 
 
-input("\n\nPress enter to exit the window......")
+def cal_bgh(sale, ln):
+    # round down to the nearest 500
+    match_matrix = math.floor(round(((sale - ln)*7), 2)/500)*500
+    found_matrix = None
+    for k,v in matrix.items():
+        if int(k) == match_matrix:
+            found_matrix = float(v)
+    bgh = round(found_matrix/7, 2)
+    return bgh
 
+
+if __name__ == "__main__":
+    # user input
+    sales = round(float(input("Enter the sales: ")), 2)
+    ln_sales = round(float(input("Enter the late night sales: ")), 2)
+    print('LNH: ', cal_lnh(ln_sales))
+    print("BGH: ", cal_bgh(sales, ln_sales))
+    input("\n\nPress enter to exit the window......")
 
 
 
