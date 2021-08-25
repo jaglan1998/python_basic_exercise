@@ -1,5 +1,3 @@
-import string
-import valid_inputs  # import whole folder
 from valid_inputs.valid_inputs import ValidInput  # import specific class
 
 
