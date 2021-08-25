@@ -2,7 +2,10 @@
 1. valid names (include only alphabets, need to be => 3 chars <=20, can have spaces)
 2. valid phone (only integral vales == 10 digits)
 3. valid strong passwords (at least 8 chars < 20, mix upper lower and numbers, special chars)
-valid """
+4. valid emails
+5. valid digit options i.e. 1, 2, 3,
+6. valid press enter key..
+"""
 import string
 
 
@@ -11,7 +14,7 @@ class ValidInput:
         self.INPUT = None
         self.email_domains = []
         with open('all_email_provider_domains.txt', 'r') as f:
-            self.email_domains = f.read().split('\n')
+            self.email_domains = (f.read()).split('\n')
 
     def is_valid_name(self):
         temp = self.INPUT.replace(' ', '')  # mix first and last name if any
@@ -74,24 +77,36 @@ class ValidInput:
             self.is_valid_password()
         return self.INPUT
 
-    def is_valid_email(self):
-        if '@' not in self.INPUT:
-            return False, 'Not a valid email. Missing @. Try again'
-        e = self.INPUT.split('@')
-        prefix = e[0]
-        domain = e[1]
-        if domain not in self.email_domains:
-            return False, 'Not a valid email domain. Try again'
-        elif len(prefix) > 20:
-            return False, 'Email prefix should be less than 20 character. Try again'
-        return True, 'Valid email'
+    # def is_valid_email(self):
+    #     if '@' not in self.INPUT:
+    #         return False, 'Not a valid email. Missing @. Try again'
+    #     e = self.INPUT.split('@')
+    #     prefix = e[0]
+    #     domain = e[1]
+    #     if domain not in self.email_domains:
+    #         return False, 'Not a valid email domain. Try again'
+    #     elif len(prefix) > 20:
+    #         return False, 'Email prefix should be less than 20 character. Try again'
+    #     return True, 'Valid email'
+    #
+    # def get_valid_email(self):
+    #     self.INPUT = input("Email: ")
+    #     self.is_valid_email()
+    #     while not self.is_valid_email()[0]:
+    #         print(self.is_valid_email()[1])
+    #         self.INPUT = input("Email: ")
+    #         self.is_valid_email()
+    #     return self.INPUT
 
-    def get_valid_email(self):
-        self.INPUT = input("Email: ")
-        self.is_valid_email()
-        while not self.is_valid_email()[0]:
-            print(self.is_valid_email()[1])
-            self.INPUT = input("Email: ")
-            self.is_valid_email()
+    def get_valid_digit_input(self, start, end):
+        self.INPUT = input("Select option: ")
+        options = [str(i) for i in range(start, end + 1)]
+        while self.INPUT not in options:
+            self.INPUT = input("*** Wrong input. Select option again: ")
         return self.INPUT
 
+    def valid_press_enter(self):
+        self.INPUT = input("Press enter to back.....")
+        while self.INPUT != '':
+            self.INPUT = input("Wrong input. Just press enter.")
+        return True
